@@ -5,26 +5,23 @@ const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
 const app = express();
+const PORT = 5000;
 
-// Middleware to parse JSON requests
 app.use(express.json());
 
-// Enable sessions for /customer routes
 app.use("/customer", session({
   secret: "fingerprint_customer",
   resave: true,
   saveUninitialized: true
 }));
 
-// Middleware to protect authenticated customer routes
 app.use("/customer/auth/*", function auth(req, res, next) {
   if (req.session && req.session.authorization) {
     const token = req.session.authorization['accessToken'];
-
     jwt.verify(token, "access", (err, user) => {
       if (!err) {
-        req.user = user; // Attach user info to request
-        next(); // Move to next middleware or route
+        req.user = user;
+        next();
       } else {
         return res.status(403).json({ message: "Invalid Token" });
       }
@@ -34,11 +31,11 @@ app.use("/customer/auth/*", function auth(req, res, next) {
   }
 });
 
-const PORT = 5000;
+app.get("/", (req, res) => {
+  res.send("Welcome to the Book Review API");
+});
 
-// Route handlers
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
-// Start server
-app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log("Server is running"));

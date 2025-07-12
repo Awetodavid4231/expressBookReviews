@@ -48,15 +48,14 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     return res.status(400).json({ message: "Review text is required." });
   }
 
-  const book = books[isbn];
-  if (!book) {
+  if (books[isbn]) {
+    books[isbn].reviews[username] = review;
+    return res.status(200).json({ message: "Review added/updated successfully." });
+  } else {
     return res.status(404).json({ message: "Book not found." });
   }
-
-  book.reviews[username] = review; // Add/update review by username
-
-  return res.status(200).json({ message: "Review added/updated successfully." });
 });
+
 
 // Task 9: Delete a user's own review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
