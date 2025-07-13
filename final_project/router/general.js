@@ -18,16 +18,16 @@ public_users.post("/register", (req, res) => {
   return res.status(200).json({ message: "User registered successfully" });
 });
 
-// Task 1
+// Task 1: Get all books
 public_users.get("/books", (req, res) => res.status(200).json(books));
 
-// Task 2
+// Task 2: Get book by ISBN
 public_users.get("/books/isbn/:isbn", (req, res) => {
   const book = books[req.params.isbn];
   book ? res.json(book) : res.status(404).json({ message: "Book not found" });
 });
 
-// Task 3
+// Task 3: Get books by Author
 public_users.get("/books/author/:author", (req, res) => {
   const author = req.params.author.toLowerCase();
   const results = [];
@@ -37,7 +37,7 @@ public_users.get("/books/author/:author", (req, res) => {
   results.length ? res.json(results) : res.status(404).json({ message: "No books by this author" });
 });
 
-// Task 4
+// Task 4: Get books by Title
 public_users.get("/books/title/:title", (req, res) => {
   const title = req.params.title.toLowerCase();
   const results = [];
@@ -47,13 +47,13 @@ public_users.get("/books/title/:title", (req, res) => {
   results.length ? res.json(results) : res.status(404).json({ message: "No books with this title" });
 });
 
-// Task 5
+// Task 5: Get book reviews
 public_users.get("/books/review/:isbn", (req, res) => {
   const book = books[req.params.isbn];
   book ? res.json(book.reviews) : res.status(404).json({ message: "Book not found" });
 });
 
-// Axios-based internal routes
+// Internal Routes for Axios
 public_users.get("/internal/books", (req, res) => res.json(books));
 public_users.get("/internal/isbn/:isbn", (req, res) => {
   const book = books[req.params.isbn];
@@ -77,9 +77,11 @@ public_users.get("/internal/title/:title", (req, res) => {
 });
 
 // Task 10–13 using Axios
+const BASE_URL = "https://awetoegbarog-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai";
+
 public_users.get("/books/axios", async (req, res) => {
   try {
-    const response = await axios.get("https://awetoegbarog-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/internal/books");
+    const response = await axios.get(`${BASE_URL}/internal/books`);
     res.json(response.data);
   } catch (e) {
     res.status(500).json({ message: "Failed to fetch books", error: e.message });
@@ -87,7 +89,7 @@ public_users.get("/books/axios", async (req, res) => {
 });
 public_users.get("/books/axios/isbn/:isbn", async (req, res) => {
   try {
-    const response = await axios.get(`https://awetoegbarog-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/internal/isbn/${req.params.isbn}`);
+    const response = await axios.get(`${BASE_URL}/internal/isbn/${req.params.isbn}`);
     res.json(response.data);
   } catch (e) {
     res.status(404).json({ message: "Book not found", error: e.message });
@@ -95,7 +97,7 @@ public_users.get("/books/axios/isbn/:isbn", async (req, res) => {
 });
 public_users.get("/books/axios/author/:author", async (req, res) => {
   try {
-    const response = await axios.get(`https://awetoegbarog-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/internal/author/${req.params.author}`);
+    const response = await axios.get(`${BASE_URL}/internal/author/${req.params.author}`);
     res.json(response.data);
   } catch (e) {
     res.status(404).json({ message: "Author not found", error: e.message });
@@ -103,7 +105,7 @@ public_users.get("/books/axios/author/:author", async (req, res) => {
 });
 public_users.get("/books/axios/title/:title", async (req, res) => {
   try {
-    const response = await axios.get(`https://awetoegbarog-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/internal/title/${req.params.title}`);
+    const response = await axios.get(`${BASE_URL}/internal/title/${req.params.title}`);
     res.json(response.data);
   } catch (e) {
     res.status(404).json({ message: "Title not found", error: e.message });
